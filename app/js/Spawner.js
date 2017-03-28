@@ -5,9 +5,10 @@ import Triangle from "./shapes/Triangle";
 import Grows from "./modifiers/Grows";
 import MovesX from "./modifiers/MovesX";
 import MovesY from "./modifiers/MovesY";
+import Rave from "./modifiers/Rave";
 
 let availableShapes = [Circle, Square, Triangle];
-let availableModifiers = [Grows, MovesX, MovesY];
+let availableModifiers = [Grows, MovesX, MovesY, Rave];
 
 class Spawner {
     static spawnShape(ctx, width, height) {

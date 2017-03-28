@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -285,12 +285,14 @@ class Playground {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shapes_Circle__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shapes_Square__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shapes_Triangle__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shapes_Circle__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shapes_Square__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shapes_Triangle__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modifiers_Grows__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modifiers_MovesX__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modifiers_MovesY__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modifiers_Rave__ = __webpack_require__(8);
+
 
 
 
@@ -300,7 +302,7 @@ class Playground {
 
 
 let availableShapes = [__WEBPACK_IMPORTED_MODULE_0__shapes_Circle__["a" /* default */], __WEBPACK_IMPORTED_MODULE_1__shapes_Square__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__shapes_Triangle__["a" /* default */]];
-let availableModifiers = [__WEBPACK_IMPORTED_MODULE_3__modifiers_Grows__["a" /* default */], __WEBPACK_IMPORTED_MODULE_4__modifiers_MovesX__["a" /* default */], __WEBPACK_IMPORTED_MODULE_5__modifiers_MovesY__["a" /* default */]];
+let availableModifiers = [__WEBPACK_IMPORTED_MODULE_3__modifiers_Grows__["a" /* default */], __WEBPACK_IMPORTED_MODULE_4__modifiers_MovesX__["a" /* default */], __WEBPACK_IMPORTED_MODULE_5__modifiers_MovesY__["a" /* default */], __WEBPACK_IMPORTED_MODULE_6__modifiers_Rave__["a" /* default */]];
 
 class Spawner {
     static spawnShape(ctx, width, height) {
@@ -449,6 +451,28 @@ class MovesY extends __WEBPACK_IMPORTED_MODULE_1__Modifier__["a" /* default */] 
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Modifier__ = __webpack_require__(1);
+
+
+class Rave extends __WEBPACK_IMPORTED_MODULE_0__Modifier__["a" /* default */] {
+    constructor() {
+        super();
+        this.keep = false;
+    }
+    apply() {
+        this.shape.red = Math.random() * 255;
+        this.shape.green = Math.random() * 255;
+        this.shape.blue = Math.random() * 255;
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = Rave;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Shape__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Store__ = __webpack_require__(0);
 
@@ -475,7 +499,7 @@ class Circle extends __WEBPACK_IMPORTED_MODULE_0__Shape__["a" /* default */] {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -501,7 +525,7 @@ class Square extends __WEBPACK_IMPORTED_MODULE_0__Shape__["a" /* default */] {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -539,7 +563,7 @@ class Triangle extends __WEBPACK_IMPORTED_MODULE_0__Shape__["a" /* default */] {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
