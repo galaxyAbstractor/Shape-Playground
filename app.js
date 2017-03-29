@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 14);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -93,27 +93,15 @@ const store = new Store();
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class Modifier {
-    constructor() {
-        this.keep = true;
-    }
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modifiers_Grows__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modifiers_MovesX__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modifiers_MovesY__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modifiers_Rave__ = __webpack_require__(4);
 
-    init() {
 
-    }
 
-    setShape(shape) {
-        this.shape = shape;
-    }
-}
 
-/* harmony default export */ __webpack_exports__["a"] = Modifier;
 
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 class Shape {
     constructor(ctx, x, y, red, green, blue, modifiers) {
         this.ctx = ctx;
@@ -129,12 +117,23 @@ class Shape {
         this.speed = 0.005;
         this.modifiers = modifiers;
         this.fadesOut = true;
+        this.supportsModifiers = [__WEBPACK_IMPORTED_MODULE_0__modifiers_Grows__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__modifiers_MovesY__["a" /* default */], __WEBPACK_IMPORTED_MODULE_1__modifiers_MovesX__["a" /* default */], __WEBPACK_IMPORTED_MODULE_3__modifiers_Rave__["a" /* default */]];
 
         let self = this;
+
         this.modifiers.forEach(function (modifier) {
             modifier.setShape(self);
             modifier.init();
         })
+    }
+
+    cleanModifiers() {
+        let self = this;
+        this.modifiers = this.modifiers.filter(function (modifier) {
+            return self.supportsModifiers.reduce(function (acc, cv) {
+                return modifier instanceof cv || acc;
+            }, false);
+        });
     }
 
     draw() {
@@ -163,11 +162,164 @@ class Shape {
 /* harmony default export */ __webpack_exports__["a"] = Shape;
 
 /***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Modifier {
+    constructor() {
+        this.keep = true;
+    }
+
+    init() {
+
+    }
+
+    setShape(shape) {
+        this.shape = shape;
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = Modifier;
+
+/***/ }),
 /* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Spawner__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Store__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Modifier__ = __webpack_require__(2);
+
+
+
+class MovesX extends __WEBPACK_IMPORTED_MODULE_1__Modifier__["a" /* default */] {
+    constructor() {
+        super();
+    }
+
+    init() {
+        this.shape.fadesOut = false;
+        this.direction = Math.random() < 0.5 ? -1 : 1;
+
+        if(this.direction === 1) {
+            this.shape.x = -50;
+        } else {
+            this.shape.x = __WEBPACK_IMPORTED_MODULE_0__Store__["a" /* default */].getItem("width") + 50;
+        }
+
+    }
+    apply() {
+        this.shape.x += 3 * this.direction;
+
+        if (this.direction === 1 && this.shape.x > __WEBPACK_IMPORTED_MODULE_0__Store__["a" /* default */].getItem("width") + 50) {
+            this.keep = false;
+        } else if(this.shape.x < -50) {
+            this.keep = false;
+        }
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = MovesX;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Modifier__ = __webpack_require__(2);
+
+
+class Rave extends __WEBPACK_IMPORTED_MODULE_0__Modifier__["a" /* default */] {
+    constructor() {
+        super();
+        this.keep = false;
+    }
+    apply() {
+        this.shape.red = Math.random() * 255;
+        this.shape.green = Math.random() * 255;
+        this.shape.blue = Math.random() * 255;
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = Rave;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Modifier__ = __webpack_require__(2);
+
+
+class Grows extends __WEBPACK_IMPORTED_MODULE_0__Modifier__["a" /* default */] {
+    constructor() {
+        super();
+        this.inital = true;
+    }
+    apply() {
+        if(this.inital) {
+            this.shape.size = 0;
+            this.inital = false;
+        }
+
+        if (this.shape.size < this.shape.maxSize) {
+            this.shape.size += (this.shape.maxSize * this.shape.speed);
+        }
+
+        if (this.shape.size > this.shape.maxSize) {
+            this.keep = false;
+        }
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = Grows;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Store__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Modifier__ = __webpack_require__(2);
+
+
+
+class MovesY extends __WEBPACK_IMPORTED_MODULE_1__Modifier__["a" /* default */] {
+    constructor() {
+        super();
+    }
+
+    init() {
+        this.shape.fadesOut = false;
+        this.shape.y = 0;
+        this.direction = Math.random() < 0.5 ? -1 : 1;
+
+        if(this.direction === 1) {
+            this.shape.y = -50;
+        } else {
+            this.shape.y = __WEBPACK_IMPORTED_MODULE_0__Store__["a" /* default */].getItem("height") + 50;
+        }
+
+    }
+    apply() {
+        this.shape.y += 3 * this.direction;
+
+        if (this.direction === 1 && this.shape.y > __WEBPACK_IMPORTED_MODULE_0__Store__["a" /* default */].getItem("height") + 50) {
+            this.keep = false;
+        } else if(this.shape.y < -50) {
+            this.keep = false;
+        }
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = MovesY;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Spawner__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Store__ = __webpack_require__(0);
 
 
@@ -281,17 +433,19 @@ class Playground {
 /* harmony default export */ __webpack_exports__["a"] = Playground;
 
 /***/ }),
-/* 4 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shapes_Circle__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shapes_Square__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shapes_Triangle__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modifiers_Grows__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modifiers_MovesX__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modifiers_MovesY__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modifiers_Rave__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shapes_Square__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shapes_Triangle__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__shapes_Sine__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__shapes_RaveSine__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modifiers_Grows__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modifiers_MovesX__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__modifiers_MovesY__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__modifiers_Rave__ = __webpack_require__(4);
 
 
 
@@ -301,8 +455,10 @@ class Playground {
 
 
 
-let availableShapes = [__WEBPACK_IMPORTED_MODULE_0__shapes_Circle__["a" /* default */], __WEBPACK_IMPORTED_MODULE_1__shapes_Square__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__shapes_Triangle__["a" /* default */]];
-let availableModifiers = [__WEBPACK_IMPORTED_MODULE_3__modifiers_Grows__["a" /* default */], __WEBPACK_IMPORTED_MODULE_4__modifiers_MovesX__["a" /* default */], __WEBPACK_IMPORTED_MODULE_5__modifiers_MovesY__["a" /* default */], __WEBPACK_IMPORTED_MODULE_6__modifiers_Rave__["a" /* default */]];
+
+
+let availableShapes = [__WEBPACK_IMPORTED_MODULE_0__shapes_Circle__["a" /* default */], __WEBPACK_IMPORTED_MODULE_1__shapes_Square__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__shapes_Triangle__["a" /* default */], __WEBPACK_IMPORTED_MODULE_3__shapes_Sine__["a" /* default */], __WEBPACK_IMPORTED_MODULE_4__shapes_RaveSine__["a" /* default */]];
+let availableModifiers = [__WEBPACK_IMPORTED_MODULE_5__modifiers_Grows__["a" /* default */], __WEBPACK_IMPORTED_MODULE_6__modifiers_MovesX__["a" /* default */], __WEBPACK_IMPORTED_MODULE_7__modifiers_MovesY__["a" /* default */], __WEBPACK_IMPORTED_MODULE_8__modifiers_Rave__["a" /* default */]];
 
 class Spawner {
     static spawnShape(ctx, width, height) {
@@ -337,143 +493,11 @@ class Spawner {
 /* harmony default export */ __webpack_exports__["a"] = Spawner;
 
 /***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Modifier__ = __webpack_require__(1);
-
-
-class Grows extends __WEBPACK_IMPORTED_MODULE_0__Modifier__["a" /* default */] {
-    constructor() {
-        super();
-        this.inital = true;
-    }
-    apply() {
-        if(this.inital) {
-            this.shape.size = 0;
-            this.inital = false;
-        }
-
-        if (this.shape.size < this.shape.maxSize) {
-            this.shape.size += (this.shape.maxSize * this.shape.speed);
-        }
-
-        if (this.shape.size > this.shape.maxSize) {
-            this.keep = false;
-        }
-    }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = Grows;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Store__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Modifier__ = __webpack_require__(1);
-
-
-
-class MovesX extends __WEBPACK_IMPORTED_MODULE_1__Modifier__["a" /* default */] {
-    constructor() {
-        super();
-    }
-
-    init() {
-        this.shape.fadesOut = false;
-        this.direction = Math.random() < 0.5 ? -1 : 1;
-
-        if(this.direction === 1) {
-            this.shape.x = -50;
-        } else {
-            this.shape.x = __WEBPACK_IMPORTED_MODULE_0__Store__["a" /* default */].getItem("width") + 50;
-        }
-
-    }
-    apply() {
-        this.shape.x += 3 * this.direction;
-
-        if (this.direction === 1 && this.shape.x > __WEBPACK_IMPORTED_MODULE_0__Store__["a" /* default */].getItem("width") + 50) {
-            this.keep = false;
-        } else if(this.shape.x < -50) {
-            this.keep = false;
-        }
-    }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = MovesX;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Store__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Modifier__ = __webpack_require__(1);
-
-
-
-class MovesY extends __WEBPACK_IMPORTED_MODULE_1__Modifier__["a" /* default */] {
-    constructor() {
-        super();
-    }
-
-    init() {
-        this.shape.fadesOut = false;
-        this.shape.y = 0;
-        this.direction = Math.random() < 0.5 ? -1 : 1;
-
-        if(this.direction === 1) {
-            this.shape.y = -50;
-        } else {
-            this.shape.y = __WEBPACK_IMPORTED_MODULE_0__Store__["a" /* default */].getItem("height") + 50;
-        }
-
-    }
-    apply() {
-        this.shape.y += 3 * this.direction;
-
-        if (this.direction === 1 && this.shape.y > __WEBPACK_IMPORTED_MODULE_0__Store__["a" /* default */].getItem("height") + 50) {
-            this.keep = false;
-        } else if(this.shape.y < -50) {
-            this.keep = false;
-        }
-    }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = MovesY;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Modifier__ = __webpack_require__(1);
-
-
-class Rave extends __WEBPACK_IMPORTED_MODULE_0__Modifier__["a" /* default */] {
-    constructor() {
-        super();
-        this.keep = false;
-    }
-    apply() {
-        this.shape.red = Math.random() * 255;
-        this.shape.green = Math.random() * 255;
-        this.shape.blue = Math.random() * 255;
-    }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = Rave;
-
-/***/ }),
 /* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Shape__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Shape__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Store__ = __webpack_require__(0);
 
 
@@ -503,7 +527,131 @@ class Circle extends __WEBPACK_IMPORTED_MODULE_0__Shape__["a" /* default */] {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Shape__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Shape__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Store__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modifiers_MovesX__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modifiers_Rave__ = __webpack_require__(4);
+
+
+
+
+
+class RaveSine extends __WEBPACK_IMPORTED_MODULE_0__Shape__["a" /* default */] {
+    constructor(ctx, x, y, red, green, blue, modifiers) {
+
+        modifiers = [new __WEBPACK_IMPORTED_MODULE_2__modifiers_MovesX__["a" /* default */]()];
+
+        super(ctx, x, y, red, green, blue, modifiers);
+
+        this.supportsModifiers = [__WEBPACK_IMPORTED_MODULE_2__modifiers_MovesX__["a" /* default */]];
+
+        super.cleanModifiers();
+
+        this.size = 20;
+        this.opacity = 1;
+    }
+    draw() {
+        super.draw();
+
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeStyle = 'rgba(' + this.red + ', ' + this.green + ', ' + this.blue + ', ' + this.opacity + ')';
+
+        let x = this.x + __WEBPACK_IMPORTED_MODULE_1__Store__["a" /* default */].getItem("x");
+        let y = this.y + __WEBPACK_IMPORTED_MODULE_1__Store__["a" /* default */].getItem("y");
+
+        this.ctx.beginPath();
+
+        for(let x1 = x; x1 < (x+100); x1 += 1) {
+            if(Math.floor(x1) % 10 == 0) {
+                this.ctx.closePath();
+
+                this.red = Math.random() * 255;
+                this.green = Math.random() * 255;
+                this.blue = Math.random() * 255;
+                this.ctx.strokeStyle = 'rgba(' + this.red + ', ' + this.green + ', ' + this.blue + ', ' + this.opacity + ')';
+                this.ctx.beginPath();
+            }
+
+
+            this.ctx.lineTo(x1, y + (20 * Math.sin(x1 / 20)));
+            if(Math.floor(x1) % 10 == 0) {
+                this.ctx.closePath();
+            }
+
+            this.ctx.stroke();
+
+        }
+
+
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = RaveSine;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Shape__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Store__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modifiers_MovesX__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modifiers_Rave__ = __webpack_require__(4);
+
+
+
+
+
+class Sine extends __WEBPACK_IMPORTED_MODULE_0__Shape__["a" /* default */] {
+    constructor(ctx, x, y, red, green, blue, modifiers) {
+
+        let hasMovesX = modifiers.reduce(function (acc, cv) {
+            return cv instanceof __WEBPACK_IMPORTED_MODULE_2__modifiers_MovesX__["a" /* default */] || acc;
+        }, false);
+
+        if(!hasMovesX) {
+            modifiers.push(new __WEBPACK_IMPORTED_MODULE_2__modifiers_MovesX__["a" /* default */]());
+        }
+
+        super(ctx, x, y, red, green, blue, modifiers);
+
+        this.supportsModifiers = [__WEBPACK_IMPORTED_MODULE_2__modifiers_MovesX__["a" /* default */], __WEBPACK_IMPORTED_MODULE_3__modifiers_Rave__["a" /* default */]];
+
+        super.cleanModifiers();
+
+        this.size = 20;
+        this.opacity = 1;
+    }
+    draw() {
+        super.draw();
+
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeStyle = 'rgba(' + this.red + ', ' + this.green + ', ' + this.blue + ', ' + this.opacity + ')';
+
+        let x = this.x + __WEBPACK_IMPORTED_MODULE_1__Store__["a" /* default */].getItem("x");
+        let y = this.y + __WEBPACK_IMPORTED_MODULE_1__Store__["a" /* default */].getItem("y");
+
+        this.ctx.beginPath();
+
+        for(let x1 = x; x1 < (x+100); x1 += 1) {
+            this.ctx.lineTo(x1, y + (20 * Math.sin(x1 / 20)));
+        }
+
+        this.ctx.stroke();
+
+    }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = Sine;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Shape__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Store__ = __webpack_require__(0);
 
 
@@ -525,11 +673,11 @@ class Square extends __WEBPACK_IMPORTED_MODULE_0__Shape__["a" /* default */] {
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Shape__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Shape__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Store__ = __webpack_require__(0);
 
 
@@ -563,12 +711,12 @@ class Triangle extends __WEBPACK_IMPORTED_MODULE_0__Shape__["a" /* default */] {
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Playground__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Playground__ = __webpack_require__(7);
 
 
 $(document).ready(function () {

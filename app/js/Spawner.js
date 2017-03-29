@@ -1,13 +1,15 @@
 import Circle from "./shapes/Circle";
 import Square from "./shapes/Square";
 import Triangle from "./shapes/Triangle";
+import Sine from "./shapes/Sine";
+import RaveSine from "./shapes/RaveSine";
 
 import Grows from "./modifiers/Grows";
 import MovesX from "./modifiers/MovesX";
 import MovesY from "./modifiers/MovesY";
 import Rave from "./modifiers/Rave";
 
-let availableShapes = [Circle, Square, Triangle];
+let availableShapes = [Circle, Square, Triangle, Sine, RaveSine];
 let availableModifiers = [Grows, MovesX, MovesY, Rave];
 
 class Spawner {

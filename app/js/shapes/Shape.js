@@ -1,3 +1,8 @@
+import Grows from "../modifiers/Grows";
+import MovesX from "../modifiers/MovesX";
+import MovesY from "../modifiers/MovesY";
+import Rave from "../modifiers/Rave";
+
 class Shape {
     constructor(ctx, x, y, red, green, blue, modifiers) {
         this.ctx = ctx;
@@ -13,12 +18,23 @@ class Shape {
         this.speed = 0.005;
         this.modifiers = modifiers;
         this.fadesOut = true;
+        this.supportsModifiers = [Grows, MovesY, MovesX, Rave];
 
         let self = this;
+
         this.modifiers.forEach(function (modifier) {
             modifier.setShape(self);
             modifier.init();
         })
+    }
+
+    cleanModifiers() {
+        let self = this;
+        this.modifiers = this.modifiers.filter(function (modifier) {
+            return self.supportsModifiers.reduce(function (acc, cv) {
+                return modifier instanceof cv || acc;
+            }, false);
+        });
     }
 
     draw() {
